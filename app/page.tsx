@@ -210,8 +210,8 @@ export default function Home() {
       </header>
 
       {/* ── BODY ────────────────────────────────────────────── */}
-      <div className="max-w-6xl mx-auto px-6 py-8">
-<div className={`flex ${showFavoritesOnly ? "" : "gap-10"}`}>
+<div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+  <div className={`flex ${showFavoritesOnly ? "" : "gap-10"}`}>
 
           {/* SIDEBAR — desktop */}
 <aside className={`w-56 flex-shrink-0 ${showFavoritesOnly ? "hidden" : "hidden md:block"}`}>  <nav className="sticky top-6 flex flex-col gap-0.5">
@@ -240,8 +240,9 @@ label={t.allDesigns}
           </aside>
 
           {/* MOBILE pills */}
-<div className={`md:hidden -mx-6 px-6 mb-5 overflow-x-auto ${showFavoritesOnly ? "hidden" : ""}`}>            <div className="flex gap-2 w-max pb-1">
-              <MobilePill label="All" active={!selectedCategory && !showFavoritesOnly}
+<div className={`md:hidden -mx-6 px-6 mb-5 overflow-x-auto ${showFavoritesOnly ? "hidden" : ""}`}>            
+<div className="flex gap-2 pb-1 overflow-x-auto">
+                <MobilePill label="All" active={!selectedCategory && !showFavoritesOnly}
                 onClick={() => { setSelectedCategory(""); setShowFavoritesOnly(false); }} />
               {categories.map((c) => (
                 <MobilePill key={c.name} label={c.name}
@@ -302,7 +303,7 @@ label={t.allDesigns}
                 )}
               </div>
             ) : (
-              <div className="grid grid-cols-2 lg:grid-cols-3 gap-5 min-h-[800px]">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
                 {visibleDesigns.map((d) => (
                   <DesignCard
                     key={d.id}
