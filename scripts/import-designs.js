@@ -85,30 +85,38 @@ async function importDesigns() {
         continue;
         }
 
-      try {
-        console.log(`⬆️ Uploading: ${file}`);
+        try {
+          console.log(`⬆️ Uploading: ${file}`);
 
-        const result = await cloudinary.uploader.upload(fullPath, {
-        folder: "designs",
-        });
+          const result = await cloudinary.uploader.upload(fullPath, {
+            folder: "designs",
+          });
 
-        const imageUrl = result.secure_url;
+          const imageUrl = result.secure_url;
 
-        const payload = {
-          name: cleanName(file),
-          category,
-          imageUrl,
-        };
+          const payload = {
+            name: cleanName(file),
+            category,
+            imageUrl,
+          };
 
-        console.log("📦 POSTING:", payload);
+          console.log("📦 POSTING:", payload);
 
-        const res = await axios.post(`${BASE_URL}/api/designs`, payload);
+          const design = await db.template.create({
+            data: {
+              name: payload.name,
+              category: payload.category,
+              imageUrl: payload.imageUrl,
+              active: true,
+            },
+          });
 
-        console.log("✅ CREATED:", res.data.name);
-      } catch (err) {
-        console.error("❌ FAILED:", file);
-        console.error(err?.response?.data || err.message);
-      }
+          console.log("✅ CREATED:", design.name);
+
+        } catch (err) {
+          console.error("❌ FAILED:", file);
+          console.error(err?.response?.data || err.message);
+        }
     }
   }
 
