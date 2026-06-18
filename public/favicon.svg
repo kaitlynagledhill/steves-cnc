@@ -1,0 +1,10 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="48" height="48" rx="8" fill="#1c1917"/>
+  <path d="M4 10 Q4 4 10 4 L38 4 Q44 4 44 10 L44 38 Q44 44 38 44 L10 44 Q4 44 4 38 Z"
+    stroke="#B07A3B" stroke-width="1.6" fill="none"/>
+  <text x="24" y="31" font-family="Georgia,serif" font-size="16" font-weight="700"
+    fill="#B07A3B" text-anchor="middle" letter-spacing="1">CNC</text>
+  <line x1="7" y1="20" x2="41" y2="20" stroke="white" stroke-width="0.7" stroke-opacity="0.25"/>
+  <path d="M9 10 L12 7 L15 10 L12 13 Z" fill="#B07A3B" fill-opacity="0.4"/>
+  <path d="M33 10 L36 7 L39 10 L36 13 Z" fill="#B07A3B" fill-opacity="0.4"/>
+</svg>

@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "OrderItem" ADD COLUMN     "engraving" TEXT NOT NULL DEFAULT '',
+ADD COLUMN     "finish" TEXT NOT NULL DEFAULT '',
+ADD COLUMN     "location" TEXT NOT NULL DEFAULT '',
+ADD COLUMN     "size" TEXT NOT NULL DEFAULT '';
