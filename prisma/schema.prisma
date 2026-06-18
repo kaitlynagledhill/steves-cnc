@@ -1,0 +1,107 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Template {
+  id              String      @id @default(cuid())
+  name            String
+  category        String
+  imageUrl        String
+  active          Boolean     @default(true)
+  createdAt       DateTime    @default(now())
+  isCategoryCover Boolean     @default(false)
+  items           OrderItem[]
+
+  @@unique([name, category])
+}
+
+model Order {
+  id              String          @id @default(cuid())
+  customerName    String
+  email           String
+  phone           String
+  createdAt       DateTime        @default(now())
+  fulfillmentType FulfillmentType
+  completedAt     DateTime?
+  startedAt       DateTime?
+  updatedAt       DateTime        @updatedAt
+  addressLine1    String?
+  addressLine2    String?
+  city            String?
+  depositAmount   Float           @default(25)
+  depositPaid     Boolean         @default(false)
+  state           String?
+  zip             String?
+  status          OrderStatus     @default(NEW)
+  items           OrderItem[]
+  quote           Quote?
+}
+
+model OrderItem {
+  id                  String   @id @default(cuid())
+  orderId             String
+  templateId          String
+  woodTypePreference  String
+  modificationRequest String
+  createdAt           DateTime @default(now())
+  quantity            Int      @default(1)
+  order               Order    @relation(fields: [orderId], references: [id])
+  template            Template @relation(fields: [templateId], references: [id])
+  finish    String @default("")
+  size      String @default("")
+  location  String @default("")
+  engraving String @default("")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+}
+
+model Category {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  coverId   String?
+  createdAt DateTime @default(now())
+}
+
+model Quote {
+  id               String      @id @default(cuid())
+  orderId          String      @unique
+  totalPrice       Float
+  depositApplied   Float       @default(25)
+  remainingBalance Float
+  shippingCost     Float?
+  estimatedDays    String?
+  notes            String?
+  status           QuoteStatus @default(SENT)
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+  token            String      @unique @default(cuid())
+  order            Order       @relation(fields: [orderId], references: [id])
+}
+
+enum FulfillmentType {
+  SHIPPING
+  PICKUP
+}
+
+enum QuoteStatus {
+  SENT
+  ACCEPTED
+  DECLINED
+}
+
+enum OrderStatus {
+  NEW
+  QUOTE_SENT
+  IN_PROGRESS
+  CLOSED
+}
