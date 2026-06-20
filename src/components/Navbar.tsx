@@ -72,10 +72,6 @@ export default function Navbar() {
             {/* Divider */}
             <span className="hidden md:block w-px h-4 bg-stone-200" />
 
-
-            {/* Divider */}
-            <span className="w-px h-4 bg-stone-200" />
-
             {/* CART */}
             <Link
               href="/cart"
@@ -89,6 +85,9 @@ export default function Navbar() {
                 </span>
               )}
             </Link>
+
+            {/* Divider */}
+            <span className="hidden md:block w-px h-4 bg-stone-200" />
 
                         {/* LANGUAGE */}
             <div className="relative" ref={dropdownRef}>
