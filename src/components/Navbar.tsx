@@ -51,7 +51,7 @@ export default function Navbar() {
 
         {/* RIGHT SIDE */}
         {!isAdmin && !isAuthPage && (
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-5">
 
             {/* ABOUT */}
             <Link
@@ -69,9 +69,6 @@ export default function Navbar() {
               {t.workshop}
             </Link>
 
-            {/* Divider */}
-            <span className="hidden md:block w-px h-4 bg-stone-200" />
-
             {/* CART */}
             <Link
               href="/cart"
@@ -86,10 +83,7 @@ export default function Navbar() {
               )}
             </Link>
 
-            {/* Divider */}
-            <span className="hidden md:block w-px h-4 bg-stone-200" />
-
-                        {/* LANGUAGE */}
+            {/* LANGUAGE */}
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setOpen((v) => !v)}
@@ -123,6 +117,23 @@ export default function Navbar() {
           </div>
         )}
       </div>
+
+            {/* MOBILE NAV (ADD THIS HERE) */}
+      {!isAdmin && !isAuthPage && (
+        <div className="md:hidden border-t border-stone-100">
+          <div className="flex justify-center gap-8 py-2 text-sm text-stone-600">
+
+            <Link href="/about" className="hover:text-stone-900 transition">
+              {t.aboutPage.title}
+            </Link>
+
+            <Link href="/workshop" className="hover:text-stone-900 transition">
+              {t.workshop}
+            </Link>
+
+          </div>
+        </div>
+      )}
     </header>
   );
 }
