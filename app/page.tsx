@@ -52,6 +52,7 @@ export default function Home() {
   const [sessionSeed] = useState(() => Math.floor(Math.random() * 1_000_000));
   const [showMobileCategories, setShowMobileCategories] = useState(false);
   const categoryDropdownRef = useRef<HTMLDivElement>(null);
+  const [sortBy, setSortBy] = useState<"default" | "az" | "za">("default");
 
   useEffect(() => {
     fetch("/api/designs")
@@ -73,7 +74,7 @@ export default function Home() {
 
   useEffect(() => {
     setVisibleCount(PAGE_SIZE);
-  }, [selectedCategory, debouncedSearch, showFavoritesOnly]);
+  }, [selectedCategory, debouncedSearch, showFavoritesOnly, sortBy]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -137,8 +138,14 @@ export default function Home() {
     debouncedSearch,
     fuse,
   ]);
+  
+  const sortedDesigns = useMemo(() => {
+  if (sortBy === "az") return [...filteredDesigns].sort((a, b) => a.name.localeCompare(b.name));
+  if (sortBy === "za") return [...filteredDesigns].sort((a, b) => b.name.localeCompare(a.name));
+  return filteredDesigns;
+}, [filteredDesigns, sortBy]);
 
-  const visibleDesigns = filteredDesigns.slice(0, visibleCount);
+  const visibleDesigns = sortedDesigns.slice(0, visibleCount);
   const noResults = filteredDesigns.length === 0;
 
   if (loading) {
@@ -351,22 +358,36 @@ export default function Home() {
               </div>
             )}
 
-            {/* Active filter context */}
-            {(selectedCategory || showFavoritesOnly || debouncedSearch) && (
+            {/* Sort + filter context row */}
+            {!noResults && (
               <div className="mb-5 flex items-center gap-2">
-                <span className="text-stone-300 text-sm">
-                  · {filteredDesigns.length}
-                </span>
-                <button
-                  onClick={() => {
-                    setSelectedCategory("");
-                    setShowFavoritesOnly(false);
-                    setSearch("");
-                  }}
-                  className="ml-auto text-xs text-stone-400 hover:text-stone-700 transition underline underline-offset-2"
-                >
-                  Clear
-                </button>
+                {(selectedCategory || showFavoritesOnly || debouncedSearch) && (
+                  <span className="text-stone-300 text-sm">· {sortedDesigns.length}</span>
+                )}
+
+                <div className="ml-auto flex items-center gap-2">
+                  {/* Sort dropdown */}
+                  {!showFavoritesOnly && (
+                    <select
+                      value={sortBy}
+                      onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
+                      className="text-xs text-stone-500 border border-stone-200 rounded-lg px-2.5 py-1.5 bg-white focus:outline-none focus:border-stone-300 transition"
+                    >
+                      <option value="default">Featured</option>
+                      <option value="az">A → Z</option>
+                      <option value="za">Z → A</option>
+                    </select>
+                  )}
+
+                  {(selectedCategory || showFavoritesOnly || debouncedSearch) && (
+                    <button
+                      onClick={() => { setSelectedCategory(""); setShowFavoritesOnly(false); setSearch(""); setSortBy("default"); }}
+                      className="text-xs text-stone-400 hover:text-stone-700 transition underline underline-offset-2"
+                    >
+                      Clear
+                    </button>
+                  )}
+                </div>
               </div>
             )}
 
