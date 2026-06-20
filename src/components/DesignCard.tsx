@@ -16,6 +16,11 @@ interface Props {
   onToggleFavorite: (id: string) => void;
 }
 
+function getCloudinaryUrl(url: string, width: number) {
+  if (!url.includes("/upload/")) return url;
+  return url.replace("/upload/", `/upload/f_auto,q_auto,w_${width}/`);
+}
+
 export default function DesignCard({
   design,
   isFavorited,
@@ -41,7 +46,13 @@ export default function DesignCard({
         {/* IMAGE */}
         <div className="relative h-56 overflow-hidden">
           <img
-            src={design.imageUrl}
+            src={getCloudinaryUrl(design.imageUrl, 600)}
+            srcSet={`
+              ${getCloudinaryUrl(design.imageUrl, 400)} 400w,
+              ${getCloudinaryUrl(design.imageUrl, 600)} 600w,
+              ${getCloudinaryUrl(design.imageUrl, 800)} 800w
+            `}
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             alt={design.name}
             className="
               h-full

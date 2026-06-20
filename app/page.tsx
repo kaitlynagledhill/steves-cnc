@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import Link from "next/link";
 import { Heart } from "lucide-react";
 import { translations } from "@/src/lib/translations";
@@ -50,6 +50,8 @@ export default function Home() {
   const [favorites, setFavorites] = useState<string[]>([]);
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [sessionSeed] = useState(() => Math.floor(Math.random() * 1_000_000));
+  const [showMobileCategories, setShowMobileCategories] = useState(false);
+  const categoryDropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetch("/api/designs")
@@ -72,6 +74,21 @@ export default function Home() {
   useEffect(() => {
     setVisibleCount(PAGE_SIZE);
   }, [selectedCategory, debouncedSearch, showFavoritesOnly]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    if (!showMobileCategories) return;
+    const handler = (e: MouseEvent) => {
+      if (
+        categoryDropdownRef.current &&
+        !categoryDropdownRef.current.contains(e.target as Node)
+      ) {
+        setShowMobileCategories(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [showMobileCategories]);
 
   const toggleFavorite = (id: string) => {
     setFavorites((prev) =>
@@ -134,34 +151,18 @@ export default function Home() {
 
   return (
     <>
-      {/*
-        To enable the serif font, add to your layout or global CSS:
-          @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap');
-        And in tailwind.config.ts:
-          theme: { extend: { fontFamily: { serif: ['"Playfair Display"', 'Georgia', 'serif'] } } }
-        Then font-serif will pick up Playfair Display automatically.
-        If you prefer not to add a font, the fallback Georgia still looks great here.
-      */}
-
       {/* ── HERO HEADER ─────────────────────────────────────── */}
       <header className="border-b border-stone-100 bg-white">
         <div className="max-w-6xl mx-auto px-6 pt-10 pb-8 flex flex-col items-center text-center gap-4">
-          {/* Visual accent — a thin rule that frames the title */}
           <span className="block w-8 h-px bg-[#B07A3B]" />
 
-          {/* Wordmark / title */}
           <div className="flex flex-col items-center gap-2">
-            {/* TITLE (restored original styling) */}
             <h1 className="font-serif text-4xl md:text-5xl text-stone-900 tracking-tight leading-tight">
               {t.hero.title}
             </h1>
-
-            {/* SUBTITLE (your original italic style) */}
             <p className="mt-1 font-serif italic text-stone-400 text-base md:text-lg leading-snug">
               {t.hero.subtitle}
             </p>
-
-            {/* DESCRIPTION (unchanged sizing from before) */}
             <p className="text-stone-500 text-sm leading-relaxed max-w-2xl">
               {t.hero.description}
             </p>
@@ -211,14 +212,14 @@ export default function Home() {
               }}
               title={showFavoritesOnly ? "Show all" : "View saved"}
               className={`
-      flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-medium
-      border transition
-      ${
-        showFavoritesOnly
-          ? "bg-[#B07A3B] border-[#B07A3B]"
-          : "text-stone-600 border-stone-200 hover:border-stone-400 hover:text-stone-800"
-      }
-    `}
+                flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-medium
+                border transition
+                ${
+                  showFavoritesOnly
+                    ? "bg-[#B07A3B] border-[#B07A3B] text-white"
+                    : "text-stone-600 border-stone-200 hover:border-stone-400 hover:text-stone-800"
+                }
+              `}
             >
               <Heart
                 size={12}
@@ -238,32 +239,63 @@ export default function Home() {
 
       {/* ── BODY ────────────────────────────────────────────── */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8 overflow-hidden">
-        {/* MOBILE pills — outside the flex row */}
-        <div
-          className={`md:hidden mb-5 overflow-x-auto ${showFavoritesOnly ? "hidden" : ""}`}
-        >
-          <div className="flex gap-2 pb-1 w-max">
-            <MobilePill
-              label="All"
-              active={!selectedCategory && !showFavoritesOnly}
-              onClick={() => {
-                setSelectedCategory("");
-                setShowFavoritesOnly(false);
-              }}
-            />
-            {categories.map((c) => (
-              <MobilePill
-                key={c.name}
-                label={c.name}
-                active={selectedCategory === c.name && !showFavoritesOnly}
-                onClick={() => {
-                  setSelectedCategory(c.name);
-                  setShowFavoritesOnly(false);
-                }}
-              />
-            ))}
+
+        {/* MOBILE category dropdown — outside the flex row */}
+        {!showFavoritesOnly && (
+          <div className="md:hidden mb-5 relative" ref={categoryDropdownRef}>
+            <button
+              onClick={() => setShowMobileCategories((v) => !v)}
+              className="flex items-center justify-between w-full px-4 py-2.5 rounded-xl border border-stone-200 bg-white text-sm text-stone-700 font-medium shadow-sm"
+            >
+              <span>{selectedCategory || "All Designs"}</span>
+              <svg
+                className={`w-4 h-4 text-stone-400 transition-transform duration-200 ${showMobileCategories ? "rotate-180" : ""}`}
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+              >
+                <path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+
+            {showMobileCategories && (
+              <div className="absolute top-full left-0 right-0 mt-1 rounded-xl border border-stone-200 bg-white shadow-lg overflow-hidden z-50 max-h-72 overflow-y-auto">
+                <button
+                  onClick={() => {
+                    setSelectedCategory("");
+                    setShowMobileCategories(false);
+                  }}
+                  className={`w-full text-left px-4 py-2.5 text-sm transition
+                    ${!selectedCategory
+                      ? "bg-stone-50 text-[#B07A3B] font-medium"
+                      : "text-stone-600 hover:bg-stone-50"
+                    }`}
+                >
+                  All Designs
+                </button>
+                <div className="border-t border-stone-100" />
+                {categories.map((c) => (
+                  <button
+                    key={c.name}
+                    onClick={() => {
+                      setSelectedCategory(c.name);
+                      setShowMobileCategories(false);
+                    }}
+                    className={`w-full text-left px-4 py-2.5 text-sm flex justify-between items-center transition
+                      ${selectedCategory === c.name
+                        ? "bg-stone-50 text-[#B07A3B] font-medium"
+                        : "text-stone-600 hover:bg-stone-50"
+                      }`}
+                  >
+                    <span>{c.name}</span>
+                    <span className="text-xs text-stone-400 tabular-nums">{c.count}</span>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
-        </div>
+        )}
 
         <div
           className={`flex flex-col md:flex-row min-w-0 ${showFavoritesOnly ? "" : "md:gap-10"}`}
@@ -341,11 +373,7 @@ export default function Home() {
             {noResults ? (
               <div className="flex flex-col items-center justify-center py-24 text-center gap-4">
                 {showFavoritesOnly && (
-                  <Heart
-                    size={32}
-                    strokeWidth={1.2}
-                    className="text-stone-200"
-                  />
+                  <Heart size={32} strokeWidth={1.2} className="text-stone-200" />
                 )}
                 <p className="text-stone-400 text-sm">
                   {showFavoritesOnly
@@ -426,7 +454,7 @@ function SidebarItem({
         px-3 py-1.5 rounded-lg text-left text-sm transition-colors
         ${
           active
-            ? "text-[#B07A3B] font-medium font-medium"
+            ? "text-[#B07A3B] font-medium"
             : "text-stone-600 hover:bg-stone-50 hover:text-stone-900"
         }
       `}
@@ -440,32 +468,6 @@ function SidebarItem({
           {count}
         </span>
       )}
-    </button>
-  );
-}
-
-function MobilePill({
-  label,
-  active,
-  onClick,
-}: {
-  label: string;
-  active: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className={`
-        px-4 py-1.5 rounded-full text-sm whitespace-nowrap transition
-        ${
-          active
-            ? "bg-stone-900 text-white"
-            : "bg-stone-100 text-stone-600 hover:bg-stone-200"
-        }
-      `}
-    >
-      {label}
     </button>
   );
 }
