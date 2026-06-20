@@ -51,7 +51,7 @@ export default function Navbar() {
 
         {/* RIGHT SIDE */}
         {!isAdmin && !isAuthPage && (
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-5">
 
             {/* ABOUT */}
             <Link
@@ -61,8 +61,27 @@ export default function Navbar() {
               {t.aboutPage.title}
             </Link>
 
-            {/* Divider */}
-            <span className="hidden md:block w-px h-4 bg-stone-200" />
+            {/* WORKSHOP */}
+            <Link
+              href="/workshop"
+              className="hidden md:inline-flex text-sm text-stone-500 hover:text-stone-900 transition px-2"
+            >
+              {t.workshop}
+            </Link>
+
+            {/* CART */}
+            <Link
+              href="/cart"
+              className="relative flex items-center justify-center w-9 h-9 rounded-full hover:bg-stone-100 transition"
+            >
+              <ShoppingCart size={20} strokeWidth={1.8} className="text-stone-700" />
+
+              {count > 0 && (
+                <span className="absolute -top-1 -right-1 flex items-center justify-center min-w-5 h-5 rounded-full bg-[#B07A3B] text-white text-[11px] font-medium px-1">
+                  {count}
+                </span>
+              )}
+            </Link>
 
             {/* LANGUAGE */}
             <div className="relative" ref={dropdownRef}>
@@ -95,26 +114,26 @@ export default function Navbar() {
               )}
             </div>
 
-            {/* Divider */}
-            <span className="w-px h-4 bg-stone-200" />
-
-            {/* CART */}
-            <Link
-              href="/cart"
-              className="relative flex items-center justify-center w-9 h-9 rounded-full hover:bg-stone-100 transition"
-            >
-              <ShoppingCart size={20} strokeWidth={1.8} className="text-stone-700" />
-
-              {count > 0 && (
-                <span className="absolute -top-1 -right-1 flex items-center justify-center min-w-5 h-5 rounded-full bg-[#B07A3B] text-white text-[11px] font-medium px-1">
-                  {count}
-                </span>
-              )}
-            </Link>
-
           </div>
         )}
       </div>
+
+            {/* MOBILE NAV (ADD THIS HERE) */}
+      {!isAdmin && !isAuthPage && (
+        <div className="md:hidden border-t border-stone-100">
+          <div className="flex justify-center gap-8 py-2 text-sm text-stone-600">
+
+            <Link href="/about" className="hover:text-stone-900 transition">
+              {t.aboutPage.title}
+            </Link>
+
+            <Link href="/workshop" className="hover:text-stone-900 transition">
+              {t.workshop}
+            </Link>
+
+          </div>
+        </div>
+      )}
     </header>
   );
 }
