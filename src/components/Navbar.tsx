@@ -61,10 +61,36 @@ export default function Navbar() {
               {t.aboutPage.title}
             </Link>
 
+            {/* WORKSHOP */}
+            <Link
+              href="/workshop"
+              className="hidden md:inline-flex text-sm text-stone-500 hover:text-stone-900 transition px-2"
+            >
+              {t.workshop}
+            </Link>
+
             {/* Divider */}
             <span className="hidden md:block w-px h-4 bg-stone-200" />
 
-            {/* LANGUAGE */}
+
+            {/* Divider */}
+            <span className="w-px h-4 bg-stone-200" />
+
+            {/* CART */}
+            <Link
+              href="/cart"
+              className="relative flex items-center justify-center w-9 h-9 rounded-full hover:bg-stone-100 transition"
+            >
+              <ShoppingCart size={20} strokeWidth={1.8} className="text-stone-700" />
+
+              {count > 0 && (
+                <span className="absolute -top-1 -right-1 flex items-center justify-center min-w-5 h-5 rounded-full bg-[#B07A3B] text-white text-[11px] font-medium px-1">
+                  {count}
+                </span>
+              )}
+            </Link>
+
+                        {/* LANGUAGE */}
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setOpen((v) => !v)}
@@ -94,23 +120,6 @@ export default function Navbar() {
                 </div>
               )}
             </div>
-
-            {/* Divider */}
-            <span className="w-px h-4 bg-stone-200" />
-
-            {/* CART */}
-            <Link
-              href="/cart"
-              className="relative flex items-center justify-center w-9 h-9 rounded-full hover:bg-stone-100 transition"
-            >
-              <ShoppingCart size={20} strokeWidth={1.8} className="text-stone-700" />
-
-              {count > 0 && (
-                <span className="absolute -top-1 -right-1 flex items-center justify-center min-w-5 h-5 rounded-full bg-[#B07A3B] text-white text-[11px] font-medium px-1">
-                  {count}
-                </span>
-              )}
-            </Link>
 
           </div>
         )}

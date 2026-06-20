@@ -162,6 +162,8 @@ howItWorks: {
   step4Desc: string;
   cta: string;
 };
+
+workshop: string;
 };
 
 export const translations: Record<string, Translation> = {
@@ -340,7 +342,8 @@ howItWorks: {
   step4Desc: "Once approved, it’s carved, finished, and shipped.",
 
   cta: "Browse designs"
-}
+},
+workshop: "Workshop"
   },
 
   es: {
@@ -519,7 +522,8 @@ howItWorks: {
   step4Desc: "Una vez aprobado, se talla, se termina y se envía.",
 
   cta: "Ver diseños"
-}
+},
+workshop: "Taller"
   }
   
 };
